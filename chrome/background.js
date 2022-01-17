@@ -65,11 +65,32 @@ function checkPACconfig(){
     function(config) {console.log(JSON.stringify(config));});
 }
 
+function geofence(isdList){
+  // Transform list to string
+  let stringList = ""
+  for (const isd of isdList){
+    stringList += isd + ",";
+  }
+
+  var req = new XMLHttpRequest();
+  req.open("PUT", "http://localhost:8888/setISDPolicy", true);
+  req.setRequestHeader('Content-type','application/raw; charset=utf-8');
+  req.onreadystatechange = function() {
+      if (req.readyState == 4) {
+        if (req.status == 200) {
+          const resp = req.responseText;
+          console.log("Response from SKIP: " + resp);
+          }
+      }
+  };
+  req.send(stringList);
+}
+
 chrome.storage.onChanged.addListener((changes, namespace) =>{
   if (namespace == 'sync' && changes.list?.newValue){
     updatePACScript(changes.list.newValue);
     checkPACconfig();
-  } 
+  }
   // In case we disable running for the extension, lets put an empty set for now
   // Later, we could remove the PAC script, but doesn't impact us now...
   else if (namespace == 'sync' && changes.extension_running?.newValue !== undefined){
@@ -84,6 +105,12 @@ chrome.storage.onChanged.addListener((changes, namespace) =>{
     }
     updateRunningIcon(changes.extension_running.newValue);
   }
+
+  else if (namespace == 'sync' && changes.isd_list?.newValue){
+    console.log(changes.isd_list.newValue)
+    geofence(changes.isd_list.newValue);
+  }
+
 })
 
 loadHostList();

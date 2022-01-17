@@ -8,7 +8,12 @@ let checkboxRunning = document.getElementById('checkboxRunning');
 window.onload = function () {
   // Update host list in popup
   getStorageValue('list').then((hostSet) => {
-    displayHostList(hostSet); 
+    displayHostList(hostSet);
+  });
+
+  // Update host list in popup
+  getStorageValue('isd_list').then((isdSet) => {
+    displayISDList(isdSet);
   });
 
   // Update Forwarding badge depending on storage settings
@@ -38,6 +43,7 @@ function toggleExtensionRunning () {
   toggleRunning.checked = !toggleRunning.checked
   saveStorageValue('extension_running',toggleRunning.checked).then(() => {
     document.getElementById('domains-container').hidden = !toggleRunning.checked;
+    document.getElementById('geofencing-container').hidden = !toggleRunning.checked;
   });
 
 }
@@ -99,5 +105,64 @@ function deleteHosts(hostlist){
       console.log('Deleted hosts: ' + hostlist);
     })
     return hostSet;
+  });
+}
+
+//Listeners for geofencing feature
+
+document.getElementById('button-write-isd')
+            .addEventListener('click', function() {
+              let isd = document.getElementById("input-isd").value
+              document.getElementById("input-isd").value = ""
+              addISD(isd).then(isdSet=>{
+                displayISDList([...isdSet]);
+                return isdSet;
+              })
+            });
+
+
+document.getElementById('button-delete-isd')
+            .addEventListener('click', function() {
+              let isdCheckboxes = document.getElementById("output-isd").children
+              let isdList = new Array()
+              for (var i = 0; i < isdCheckboxes.length; i++){
+                if (isdCheckboxes[i].getElementsByTagName("input")[0].checked){
+                  let isdname = isdCheckboxes[i].outerText;
+                  isdList.push(isdname);
+                }
+              }
+              deleteISD(isdList).then(isdSet=>{
+                displayISDList([...isdSet]);
+                return isdSet;
+              })
+            });
+
+function displayISDList(isdList){
+  document.getElementById('output-isd').innerHTML = ""
+  for(var i=0; i < isdList.length; i++){
+    document.getElementById('output-isd')
+          .innerHTML+= '<label class="inline-flex items-center mt-3"> <input type="checkbox" id=isdname-' + i + ' class="form-checkbox h-4 w-4 text-gray-600"><span class="ml-2 text-gray-700">'+  isdList[i] + '</span> </label>';
+  }
+}
+
+function addISD(isd){
+  return getStorageValue('isd_list').then(toSet).then(isdSet => {
+    isdSet.add(isd);
+    saveStorageValue('isd_list', [...isdSet]).then(() => {
+      console.log('Added isd: ' + isd);
+    })
+    return isdSet;
+  });
+}
+
+function deleteISD(isdList){
+  return getStorageValue('isd_list').then(toSet).then(isdSet => {
+    for (const isd of isdList){
+      isdSet.delete(isd);
+    }
+    saveStorageValue('isd_list', [...isdSet]).then(() => {
+      console.log('Deleted isd: ' + isdList);
+    })
+    return isdSet;
   });
 }

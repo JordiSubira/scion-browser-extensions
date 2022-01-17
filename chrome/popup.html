@@ -22,7 +22,7 @@
    <body>
       <h3 class="text-lg font-bold mb-3 mt-3">SCION Browser Extension</h3>
       <div class="flex justify-center mb-4">
-         <label 
+         <label
             for="toogleA"
             class="flex items-center cursor-pointer"
             >
@@ -54,6 +54,19 @@
          </div>
          <div class="flex mb-2 justify-center">
             <button class="px-2 py-1 rounded-md text-sm font-medium border-0 focus:outline-none focus:ring transition text-red-600 bg-red-50 hover:text-red-800 hover:bg-red-100 active:bg-red-200 focus:ring-red-300" id="button-delete-hostname">Delete Selected</button>
+         </div>
+      </div>
+      <div id="geofencing-container">
+         <h3 class="text-base font-bold mt-2">Geofenced domains</h3>
+         <div class="flex flex-col items-center mb-3" id=output-isd>
+            <!-- TEXT showing geofenced isd in persistance -->
+         </div>
+         <div class="flex mb-2 justify-center">
+            <input type="text" id="input-isd" class="px-2 py-1 mr-1 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-200">
+            <button class="px-2 py-1 rounded-md text-sm font-medium border-0 focus:outline-none focus:ring transition text-blue-600 bg-blue-50 hover:text-blue-800 hover:bg-blue-100 active:bg-blue-200 focus:ring-blue-300" id="button-write-isd">Add ISD</button>
+         </div>
+         <div class="flex mb-2 justify-center">
+            <button class="px-2 py-1 rounded-md text-sm font-medium border-0 focus:outline-none focus:ring transition text-red-600 bg-red-50 hover:text-red-800 hover:bg-red-100 active:bg-red-200 focus:ring-red-300" id="button-delete-isd">Delete ISD</button>
          </div>
       </div>
       <script src="shared/storage.js"></script>
